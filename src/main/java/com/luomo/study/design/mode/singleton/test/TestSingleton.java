@@ -18,8 +18,10 @@ import java.util.concurrent.*;
  */
 public class TestSingleton {
 
-
-    boolean lock;
+    /**
+     * 加volatile关键字解决main方法死循环
+     */
+    volatile boolean lock;
 
     public boolean isLock() {
         return lock;
@@ -42,9 +44,7 @@ public class TestSingleton {
             //异步执行
             pool.execute(() -> {
                 while (true) {
-                    System.out.println("====");
                     if (!lock.isLock()) {
-                        System.out.println("==**==");
                         Singleton singleton = Singleton.getInstance();
                         instanceSet.add(singleton.toString());
                         break;
@@ -55,7 +55,6 @@ public class TestSingleton {
         //为了给足够的时间让100个线程全部开启
         Thread.sleep(5000);
         lock.setLock(false);
-        System.out.println("打开锁");
         //将锁打开以后，保证所有的线程都已经调用了getInstance方法
         Thread.sleep(5000);
         System.out.println("------并发情况下我们取到的实例------");
