@@ -1,4 +1,4 @@
-package com.luomo.study.design.mode.proxy;
+package com.luomo.study.design.patten.proxy;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

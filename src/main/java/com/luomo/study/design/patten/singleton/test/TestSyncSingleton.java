@@ -1,7 +1,7 @@
-package com.luomo.study.design.mode.singleton.test;
+package com.luomo.study.design.patten.singleton.test;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.luomo.study.design.mode.singleton.BadSyncSingleton;
+import com.luomo.study.design.patten.singleton.SyncSingleton;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,14 +9,18 @@ import java.util.Set;
 import java.util.concurrent.*;
 
 /**
- * 测试整个getInstance同步
+ * 测试同步instance为空的部分代码
  *
- * 会有一些无谓的等待
+ * 深入到JVM层考虑(可能)会有问题
+ *
+ * 如果JVM调优调整指令的执行顺序的话...
+ *
+ * http://www.cnblogs.com/zuoxiaolong/p/pattern2.html
  *
  * @author LiuMei
  * @date 2017-11-24.
  */
-public class TestBadSyncSingleton {
+public class TestSyncSingleton {
 
 
     boolean lock;
@@ -31,7 +35,7 @@ public class TestBadSyncSingleton {
 
     public static void main(String[] args) throws InterruptedException {
         final Set<String> instanceSet = Collections.synchronizedSet(new HashSet<String>());
-        final TestBadSyncSingleton lock = new TestBadSyncSingleton();
+        final TestSyncSingleton lock = new TestSyncSingleton();
         lock.setLock(true);
 
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("demo-pool-%d").build();
@@ -45,7 +49,7 @@ public class TestBadSyncSingleton {
                     System.out.println("====");
                     if (!lock.isLock()) {
                         System.out.println("==**==");
-                        BadSyncSingleton singleton = BadSyncSingleton.getInstance();
+                        SyncSingleton singleton = SyncSingleton.getInstance();
                         instanceSet.add(singleton.toString());
                         break;
                     }

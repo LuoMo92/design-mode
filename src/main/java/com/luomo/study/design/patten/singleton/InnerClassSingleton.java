@@ -1,4 +1,4 @@
-package com.luomo.study.design.mode.singleton;
+package com.luomo.study.design.patten.singleton;
 
 /**
  *

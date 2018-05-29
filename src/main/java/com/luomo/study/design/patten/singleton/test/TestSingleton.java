@@ -1,7 +1,7 @@
-package com.luomo.study.design.mode.singleton.test;
+package com.luomo.study.design.patten.singleton.test;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.luomo.study.design.mode.singleton.Singleton;
+import com.luomo.study.design.patten.singleton.Singleton;
 
 import java.util.Collections;
 import java.util.HashSet;
