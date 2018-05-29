@@ -1,4 +1,4 @@
-package com.luomo.study.design.patten.factory;
+package com.luomo.study.design.patten.factory.operation;
 
 import static com.luomo.study.design.patten.util.Print.print;
 

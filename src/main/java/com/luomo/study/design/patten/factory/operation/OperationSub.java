@@ -1,4 +1,4 @@
-package com.luomo.study.design.patten.factory;
+package com.luomo.study.design.patten.factory.operation;
 
 /**
  * 减法类
@@ -6,7 +6,8 @@ package com.luomo.study.design.patten.factory;
  * @author LiuMei
  * @date 2018-05-18.
  */
-public class OperationSub extends Operation {
+public class
+OperationSub extends Operation {
 
     @Override
     public double getResult() {
