@@ -16,11 +16,11 @@ public class DynamicProxy implements InvocationHandler {
         this.source = source;
     }
 
-    public void before(){
+    public void before() {
         System.out.println("在方法前做一些事，比如打开事务");
     }
 
-    public void after(){
+    public void after() {
         System.out.println("在方法返回前做一些事，比如提交事务");
     }
 
@@ -31,14 +31,24 @@ public class DynamicProxy implements InvocationHandler {
         if (method.getName().equals("toString")) {
             before();
         }
-        Object result = method.invoke(source, args);
+
+        /**
+         * 下面的代码说明不实现接口也可以实现动态代理
+         * 传入的类包含接口的方法就可以
+         * 这种突破JDK动态代理必须实现接口的行为有点画蛇添足
+         * 因为你本来也就实现了该接口的方法，只差一句implements
+         */
+        Method declaredMethod = source.getClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
+        declaredMethod.setAccessible(true);
+        Object result = null;
+        result = declaredMethod.invoke(source, args);
         if (method.getName().equals("toString")) {
             after();
         }
         return result;
     }
 
-    public Object getProxy(){
+    public Object getProxy() {
         return Proxy.newProxyInstance(getClass().getClassLoader(), source.getClass().getInterfaces(), this);
     }
 
