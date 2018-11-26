@@ -8,7 +8,7 @@ import java.util.Observer;
  * @author LiuMei
  * @date 2018-11-26.
  */
-public class Reader implements Observer {
+public class Reader implements Observer,WriterListener {
 
     private String name;
 
@@ -27,6 +27,8 @@ public class Reader implements Observer {
      */
     public void subscribe(String writerName){
         WriterManager.getInstance().getWriter(writerName).addObserver(this);
+        //把自己加到作者的监听器列表里
+        WriterManager.getInstance().getWriter(writerName).registerListener(this);
     }
 
     /**
@@ -35,6 +37,7 @@ public class Reader implements Observer {
      */
     public void unsubscribe(String writerName){
         WriterManager.getInstance().getWriter(writerName).deleteObserver(this);
+        WriterManager.getInstance().getWriter(writerName).unregisterListener(this);
     }
 
     /**
@@ -48,5 +51,11 @@ public class Reader implements Observer {
             Writer writer = (Writer) o;
             System.out.println(name+"知道" + writer.getName() + "发布了新书《" + writer.getLastNovel() + "》，非要去看！");
         }
+    }
+
+    @Override
+    public void addNovel(WriterEvent writerEvent) {
+        Writer writer = writerEvent.getWriter();
+        System.out.println(name+"知道" + writer.getName() + "发布了新书《" + writer.getLastNovel() + "》，非要去看！");
     }
 }
