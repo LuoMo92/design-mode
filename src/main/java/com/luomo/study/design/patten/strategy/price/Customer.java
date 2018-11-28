@@ -41,4 +41,8 @@ public class Customer {
     public Double getTotalAmount() {
         return totalAmount;
     }
+
+    public Double getAmount() {
+        return amount;
+    }
 }

@@ -5,6 +5,8 @@ import java.lang.annotation.Annotation;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * @author LiuMei
@@ -34,31 +36,50 @@ public class CalPriceFactory {
      * @return
      */
     public CalPrice createCalPrice(Customer customer) {
+        /**
+         * 为了支持优先级排序，采用可排序的MAP支持
+         * 这个MAP事为了储存我们当前策略的运行时类信息
+         */
+        SortedMap<Integer, Class<? extends CalPrice>> classSortedMap = new TreeMap<>();
+
         Double totalAmount = customer.getTotalAmount();
+        Double amount = customer.getAmount();
         //在策略列表中查找策略
         for (Class<? extends CalPrice> clazz : calPriceList) {
-            TotalValidRegion totalValidRegion = handleAnnotation(clazz);
-            if (totalAmount >= totalValidRegion.min() && totalAmount <= totalValidRegion.max()) {
-                try {
-                    return clazz.newInstance();
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+            Annotation annotation = handleAnnotation(clazz);
+            if (annotation instanceof TotalValidRegion) {
+                TotalValidRegion totalValidRegion = (TotalValidRegion) annotation;
+                //判断总金额是否在注解的区间
+                if (totalAmount >= totalValidRegion.value().min() && totalAmount <= totalValidRegion.value().max()) {
+                    //将采用的策略放入MAP
+                    classSortedMap.put(totalValidRegion.value().order(),clazz);
+                }
+            } else if (annotation instanceof OnceValidRegion) {
+                OnceValidRegion onceValidRegion = (OnceValidRegion) annotation;
+                //判断单次金额是否在注解的区间，注意这次判断的是客户当次消费的金额
+                if (amount >= onceValidRegion.value().min() && amount <= onceValidRegion.value().max()) {
+                    classSortedMap.put(onceValidRegion.value().order(),clazz);
                 }
             }
         }
-        throw new RuntimeException("策略获得失败");
+       return CalPriceProxy.getProxy(classSortedMap);
     }
 
-    private TotalValidRegion handleAnnotation(Class<? extends CalPrice> clazz) {
+    /**
+     * 传入策略类，返回它的注解
+     * TotalValidRegion OnceValidRegion两种注解
+     *
+     * @param clazz
+     * @return
+     */
+    private Annotation handleAnnotation(Class<? extends CalPrice> clazz) {
         Annotation[] declaredAnnotations = clazz.getDeclaredAnnotations();
         if (declaredAnnotations == null || declaredAnnotations.length == 0) {
             return null;
         }
         for (int i = 0; i < declaredAnnotations.length; i++) {
-            if (declaredAnnotations[i] instanceof TotalValidRegion) {
-                return (TotalValidRegion) declaredAnnotations[i];
+            if (declaredAnnotations[i] instanceof TotalValidRegion || declaredAnnotations[i] instanceof OnceValidRegion) {
+                return declaredAnnotations[i];
             }
         }
         return null;

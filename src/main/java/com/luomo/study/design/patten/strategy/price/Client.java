@@ -14,6 +14,8 @@ public class Client {
         System.out.println("客户需要付钱：" + customer.calLastAmount());
         customer.buy(1200D);
         System.out.println("客户需要付钱：" + customer.calLastAmount());
+        customer.buy(1000D);
+        System.out.println("客户需要付钱：" + customer.calLastAmount());
         customer.buy(1200D);
         System.out.println("客户需要付钱：" + customer.calLastAmount());
     }
