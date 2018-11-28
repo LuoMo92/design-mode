@@ -47,7 +47,7 @@ class SuperVip implements CalPrice {
 
 }
 
-@TotalValidRegion(@ValidRegion(min = 3000,max = 4000,order = 99))
+@TotalValidRegion(@ValidRegion(min = 3000,order = 99))
 class GoldVip implements CalPrice {
     @Override
     public Double calPrice(Double originalPrice) {
